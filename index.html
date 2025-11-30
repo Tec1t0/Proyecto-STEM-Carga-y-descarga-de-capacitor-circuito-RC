@@ -3,13 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Simulación RC - Estilo Dashboard</title>
+    <title>Simulación RC - Proyecto STEM</title>
     
     <script src="libs/tailwind.js"></script>
     <script src="libs/chart.js"></script>
     
-    <link rel="stylesheet" href="style.css">
-
     <script>
         tailwind.config = {
             theme: {
@@ -24,9 +22,34 @@
             }
         }
     </script>
+
     <style>
+        /* Fuentes */
+        body {
+            font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background-color: #F1F5F9;
+            color: #1A222C;
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: #f1f1f1; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+
+        /* Estilos Matemáticos */
         .math-font { font-family: 'Times New Roman', Times, serif; font-style: italic; }
-        .math-block { background-color: #f8fafc; border-left-width: 4px; padding: 1rem; margin-top: 0.5rem; margin-bottom: 0.5rem; border-radius: 0 0.5rem 0.5rem 0; }
+        .math-block { background-color: #f8fafc; border-left-width: 4px; border-radius: 0 0.5rem 0.5rem 0; }
+
+        /* REGLAS OBLIGATORIAS PARA EL MODAL */
+        .hidden { display: none !important; }
+        .flex { display: flex !important; }
+
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fade-in-down { animation: fadeInDown 0.3s ease-out forwards; }
     </style>
 </head>
 <body class="text-slate-600 bg-body">
@@ -40,15 +63,9 @@
             <div class="py-4 px-4">
                 <ul class="space-y-2">
                     <li>
-                        <a href="#" class="flex items-center rounded-lg bg-primary px-4 py-2 text-white shadow-md transition-transform hover:scale-105">
-                            <svg class="h-5 w-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path></svg>
+                        <a href="#" class="flex items-center rounded-lg bg-primary px-4 py-2 text-white shadow-md">
+                            <svg class="h-5 w-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path></svg>
                             <span>Dashboard RC</span>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="#" onclick="toggleModal()" class="flex items-center rounded-lg px-4 py-2 hover:bg-slate-100 transition-colors">
-                            <svg class="h-5 w-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
-                            <span>Memoria Cálculo</span>
                         </a>
                     </li>
                 </ul>
@@ -59,39 +76,42 @@
             
             <header class="flex w-full items-center justify-between bg-white px-6 py-4 shadow-sm sticky top-0 z-10">
                 <div class="flex items-center gap-4">
-                    <h1 class="text-2xl font-bold text-dark">Simulación Carga/Descarga Capacitor</h1>
+                    <h1 class="text-2xl font-bold text-dark">Simulación Carga/Descarga</h1>
                 </div>
-                <div class="flex items-center gap-3">
-                    <span class="text-sm font-medium text-slate-500">Equipo de Ingeniería</span>
+                
+                <div class="flex items-center gap-4">
+                    <button onclick="window.toggleModal()" class="flex items-center gap-2 bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition shadow-md border border-indigo-700">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg>
+                        <span class="font-medium">Ver Memoria Cálculo</span>
+                    </button>
+                    
+                    <div class="h-8 w-px bg-slate-200 hidden sm:block"></div>
+                    <span class="text-sm font-medium text-slate-500 hidden sm:block">Equipo de Ingeniería</span>
                 </div>
             </header>
 
             <main class="p-6 md:p-10">
                 
                 <div class="grid grid-cols-1 gap-6 md:grid-cols-3 mb-8">
-                    <div class="rounded-sm border border-slate-200 bg-white p-6 shadow-sm hover:shadow-md transition-shadow">
+                    <div class="rounded-sm border border-slate-200 bg-white p-6 shadow-sm">
                         <div class="flex items-center justify-between">
                             <div>
                                 <h4 class="text-lg font-bold text-dark" id="displayTau">0.00 s</h4>
                                 <span class="text-sm font-medium text-slate-500">Constante de Tiempo (τ)</span>
                             </div>
-                            <div class="flex h-10 w-10 items-center justify-center rounded-full bg-blue-100 text-primary">
-                                <strong>τ</strong>
-                            </div>
+                            <div class="flex h-10 w-10 items-center justify-center rounded-full bg-blue-100 text-primary"><strong>τ</strong></div>
                         </div>
                     </div>
-                    <div class="rounded-sm border border-slate-200 bg-white p-6 shadow-sm hover:shadow-md transition-shadow">
+                    <div class="rounded-sm border border-slate-200 bg-white p-6 shadow-sm">
                         <div class="flex items-center justify-between">
                             <div>
                                 <h4 class="text-lg font-bold text-dark" id="displayVmax">0.00 V</h4>
                                 <span class="text-sm font-medium text-slate-500">Voltaje Fuente</span>
                             </div>
-                            <div class="flex h-10 w-10 items-center justify-center rounded-full bg-green-100 text-green-600">
-                                <strong>V</strong>
-                            </div>
+                            <div class="flex h-10 w-10 items-center justify-center rounded-full bg-green-100 text-green-600"><strong>V</strong></div>
                         </div>
                     </div>
-                     <div class="rounded-sm border border-slate-200 bg-white p-6 shadow-sm hover:shadow-md transition-shadow">
+                     <div class="rounded-sm border border-slate-200 bg-white p-6 shadow-sm">
                         <div class="flex items-center justify-between">
                             <div>
                                 <h4 class="text-lg font-bold text-dark" id="displayStatus">En espera</h4>
@@ -108,38 +128,62 @@
                     
                     <div class="xl:col-span-1 rounded-sm border border-slate-200 bg-white shadow-sm">
                         <div class="border-b border-slate-200 px-6 py-4">
-                            <h3 class="font-bold text-dark">Parámetros del Circuito RC</h3>
+                            <h3 class="font-bold text-dark">Parámetros</h3>
                         </div>
                         <div class="p-6">
                             <form id="simulationForm">
                                 <div class="mb-4">
-                                    <label class="mb-2 block text-sm font-medium text-dark">Resistencia (R) [Ω]</label>
-                                    <input type="number" step="any" id="inputR" placeholder="Ej: 1000" class="w-full rounded border border-slate-300 bg-transparent px-4 py-2 outline-none focus:border-primary transition" required>
+                                    <label class="mb-2 block text-sm font-medium text-dark">Resistencia (R)</label>
+                                    <div class="flex">
+                                        <input type="number" step="any" id="inputR" placeholder="Ej: 1" class="w-full rounded-l border border-r-0 border-slate-300 bg-transparent px-4 py-2 outline-none focus:border-primary" required>
+                                        <select id="unitR" class="rounded-r border border-slate-300 bg-slate-50 px-3 py-2 text-sm outline-none font-medium text-slate-600">
+                                            <option value="1">Ω</option>
+                                            <option value="1e3" selected>kΩ</option>
+                                            <option value="1e6">MΩ</option>
+                                        </select>
+                                    </div>
                                 </div>
                                 <div class="mb-4">
-                                    <label class="mb-2 block text-sm font-medium text-dark">Capacitancia (C) [μF]</label>
-                                    <input type="number" step="any" id="inputC" placeholder="Ej: 1000" class="w-full rounded border border-slate-300 bg-transparent px-4 py-2 outline-none focus:border-primary transition" required>
-                                    <p class="text-xs text-slate-400 mt-1">* Se convertirá automáticamente a Faradios</p>
+                                    <label class="mb-2 block text-sm font-medium text-dark">Capacitancia (C)</label>
+                                    <div class="flex">
+                                        <input type="number" step="any" id="inputC" placeholder="Ej: 1000" class="w-full rounded-l border border-r-0 border-slate-300 bg-transparent px-4 py-2 outline-none focus:border-primary" required>
+                                        <select id="unitC" class="rounded-r border border-slate-300 bg-slate-50 px-3 py-2 text-sm outline-none font-medium text-slate-600">
+                                            <option value="1">F</option>
+                                            <option value="1e-3">mF</option>
+                                            <option value="1e-6" selected>μF</option>
+                                            <option value="1e-9">nF</option>
+                                        </select>
+                                    </div>
                                 </div>
                                 <div class="mb-4">
-                                    <label class="mb-2 block text-sm font-medium text-dark">Voltaje Fuente (V) [V]</label>
-                                    <input type="number" step="any" id="inputV" placeholder="Ej: 9" class="w-full rounded border border-slate-300 bg-transparent px-4 py-2 outline-none focus:border-primary transition" required>
+                                    <label class="mb-2 block text-sm font-medium text-dark">Voltaje (V)</label>
+                                    <div class="flex">
+                                        <input type="number" step="any" id="inputV" placeholder="Ej: 9" class="w-full rounded-l border border-r-0 border-slate-300 bg-transparent px-4 py-2 outline-none focus:border-primary" required>
+                                        <select id="unitV" class="rounded-r border border-slate-300 bg-slate-50 px-3 py-2 text-sm outline-none font-medium text-slate-600">
+                                            <option value="1" selected>V</option>
+                                            <option value="1e-3">mV</option>
+                                            <option value="1e3">kV</option>
+                                        </select>
+                                    </div>
                                 </div>
                                 <div class="mb-6">
-                                    <label class="mb-2 block text-sm font-medium text-dark">Tiempo Simulación (s)</label>
-                                    <input type="number" step="any" id="inputT" placeholder="Ej: 10" class="w-full rounded border border-slate-300 bg-transparent px-4 py-2 outline-none focus:border-primary transition" required>
+                                    <label class="mb-2 block text-sm font-medium text-dark">Tiempo</label>
+                                    <div class="flex">
+                                        <input type="number" step="any" id="inputT" placeholder="Ej: 5" class="w-full rounded-l border border-r-0 border-slate-300 bg-transparent px-4 py-2 outline-none focus:border-primary" required>
+                                        <select id="unitT" class="rounded-r border border-slate-300 bg-slate-50 px-3 py-2 text-sm outline-none font-medium text-slate-600">
+                                            <option value="1" selected>s</option>
+                                            <option value="1e-3">ms</option>
+                                        </select>
+                                    </div>
                                 </div>
-                                
-                                <button type="submit" class="flex w-full justify-center rounded bg-primary p-3 font-medium text-white hover:bg-opacity-90 transition shadow-lg shadow-blue-500/30">
-                                    Simular Gráfico
-                                </button>
+                                <button type="submit" class="flex w-full justify-center rounded bg-primary p-3 font-medium text-white hover:bg-opacity-90 shadow-lg">Simular Gráfico</button>
                             </form>
                         </div>
                     </div>
 
                     <div class="xl:col-span-2 rounded-sm border border-slate-200 bg-white shadow-sm">
                         <div class="border-b border-slate-200 px-6 py-4 flex justify-between items-center">
-                            <h3 class="font-bold text-dark">Comportamiento Transitorio V(t)</h3>
+                            <h3 class="font-bold text-dark">Comportamiento Transitorio</h3>
                             <div class="flex gap-2">
                                 <span class="px-2 py-1 text-xs font-semibold bg-blue-50 text-blue-600 rounded">Carga</span>
                                 <span class="px-2 py-1 text-xs font-semibold bg-red-50 text-red-600 rounded">Descarga</span>
@@ -153,239 +197,268 @@
 
                 <div class="mt-8 rounded-sm border border-slate-200 bg-white shadow-sm">
                     <div class="border-b border-slate-200 px-6 py-4">
-                        <h3 class="font-bold text-dark">Datos Calculados (Muestreo)</h3>
+                        <h3 class="font-bold text-dark">Datos Calculados</h3>
                     </div>
                     <div class="p-6 overflow-x-auto">
                         <table class="w-full table-auto text-left text-sm">
                             <thead>
                                 <tr class="bg-slate-100 text-dark">
-                                    <th class="px-4 py-2 font-medium">Tiempo (s)</th>
-                                    <th class="px-4 py-2 font-medium text-blue-600">Voltaje Carga (V)</th>
-                                    <th class="px-4 py-2 font-medium text-red-600">Voltaje Descarga (V)</th>
-                                    <th class="px-4 py-2 font-medium">% de Carga</th>
+                                    <th class="px-4 py-2 font-medium">Tiempo</th>
+                                    <th class="px-4 py-2 font-medium text-blue-600">Carga</th>
+                                    <th class="px-4 py-2 font-medium text-red-600">Descarga</th>
+                                    <th class="px-4 py-2 font-medium">%</th>
                                 </tr>
                             </thead>
                             <tbody id="dataTableBody">
-                                <tr>
-                                    <td colspan="4" class="px-4 py-4 text-center text-slate-400">Ejecuta una simulación para ver los datos</td>
-                                </tr>
+                                <tr><td colspan="4" class="px-4 py-4 text-center text-slate-400">Sin datos</td></tr>
                             </tbody>
                         </table>
                     </div>
                 </div>
-<div class="mt-12 border-t border-slate-200 pt-8 pb-4 text-center">
+
+                <div class="mt-12 border-t border-slate-200 pt-8 pb-4 text-center">
                     <p class="text-sm text-slate-500">
-                        Desarrollado por 
-                        <span class="font-semibold text-primary">Axel Montero</span>, 
-                        <span class="font-semibold text-primary">Matías Vera</span> y 
-                        <span class="font-semibold text-primary">Marcelo Barraza</span>.
+                        Desarrollado por <span class="font-semibold text-primary">Axel Montero</span>, <span class="font-semibold text-primary">Matías Vera</span> y <span class="font-semibold text-primary">Marcelo Barraza</span>.
                     </p>
-                    <p class="text-xs text-slate-400 mt-2">
-                        Proyecto STEM - Cálculo Integral &copy; 2025
-                    </p>
+                    <p class="text-xs text-slate-400 mt-2">Proyecto STEM - Cálculo Integral &copy; 2025</p>
                 </div>
 
-            
             </main>
-
         </div>
     </div>
 
-   <div id="mathModal" class="fixed inset-0 bg-gray-900 bg-opacity-60 hidden items-center justify-center z-50 backdrop-blur-sm p-4">
+    <div id="mathModal" class="fixed inset-0 bg-gray-900 bg-opacity-60 hidden items-center justify-center z-50 backdrop-blur-sm p-4">
         <div class="bg-white rounded-lg shadow-2xl w-full max-w-4xl flex flex-col max-h-[90vh] animate-fade-in-down overflow-hidden">
             
             <div class="bg-slate-50 border-b px-6 py-4 flex justify-between items-center">
                 <div>
-                    <h3 class="text-2xl font-bold text-dark">Memoria de Cálculo: Solución Analítica</h3>
-                    <p class="text-sm text-slate-500">Resolución detallada con notación matemática estándar</p>
+                    <h3 class="text-2xl font-bold text-dark">Memoria de Cálculo</h3>
+                    <p class="text-sm text-slate-500">Solución analítica</p>
                 </div>
-                <button onclick="toggleModal()" class="text-gray-400 hover:text-red-500 transition p-2 hover:bg-red-50 rounded-full">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-                </button>
+                <button onclick="window.toggleModal()" class="text-gray-400 hover:text-red-500 p-2 rounded-full hover:bg-red-50"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg></button>
             </div>
 
             <div class="p-6 overflow-y-auto space-y-8">
-                
                 <div>
-                    <div class="flex items-center gap-2 mb-4">
-                        <div class="w-1 h-6 bg-primary rounded"></div>
-                        <h4 class="text-xl font-bold text-dark">1. Carga (Condición inicial: V(0) = 0)</h4>
-                    </div>
-                    
+                    <div class="flex items-center gap-2 mb-4"><div class="w-1 h-6 bg-primary rounded"></div><h4 class="text-xl font-bold text-dark">1. Carga (Condición inicial: V(0) = 0)</h4></div>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        
-                        <div class="bg-white border border-slate-200 rounded-lg p-4 shadow-sm relative overflow-hidden group hover:border-blue-300 transition">
-                            <span class="text-xs font-bold text-blue-500 uppercase tracking-wide">Paso 1: Variables Separables</span>
-                            <p class="text-sm text-gray-600 mt-1 mb-4">Reordenamos los términos diferenciales:</p>
-                            
-                            <div class="math-block border-l-blue-500 py-3 flex items-center justify-center bg-slate-50 overflow-x-auto">
-                                <div class="math-font text-xl flex flex-col items-center justify-center leading-none text-dark">
-                                    <span class="border-b border-slate-800 px-1 pb-1 mb-1">dV</span>
-                                    <span>V<sub>f</sub> - V</span>
-                                </div>
+                        <div class="bg-white border border-slate-200 rounded-lg p-4 shadow-sm group hover:border-blue-300 transition">
+                            <span class="text-xs font-bold text-blue-500 uppercase">Paso 1: Variables Separables</span>
+                            <div class="math-block border-l-blue-500 py-3 flex items-center justify-center bg-slate-50 overflow-x-auto mt-2">
+                                <div class="math-font text-xl flex flex-col items-center justify-center leading-none text-dark"><span class="border-b border-slate-800 px-1 pb-1 mb-1">dV</span><span>V<sub>f</sub> - V</span></div>
                                 <span class="math-font text-xl mx-4">=</span>
-                                <div class="math-font text-xl flex flex-col items-center justify-center leading-none text-dark">
-                                    <span class="border-b border-slate-800 px-1 pb-1 mb-1">dt</span>
-                                    <span>RC</span>
-                                </div>
+                                <div class="math-font text-xl flex flex-col items-center justify-center leading-none text-dark"><span class="border-b border-slate-800 px-1 pb-1 mb-1">dt</span><span>RC</span></div>
                             </div>
                         </div>
-
-                        <div class="bg-white border border-slate-200 rounded-lg p-4 shadow-sm relative overflow-hidden group hover:border-indigo-300 transition">
-                            <span class="text-xs font-bold text-indigo-500 uppercase tracking-wide">Paso 2: Integración Definida</span>
-                            <p class="text-sm text-gray-600 mt-1 mb-4">Aplicamos límites desde 0 hasta t:</p>
-                            
-                            <div class="math-block border-l-indigo-500 py-3 flex items-center justify-center bg-slate-50 overflow-x-auto">
-                                <div class="math-font text-xl flex items-center text-dark">
-                                    <span class="mr-1">- ln( V<sub>f</sub> - V )</span>
-                                    <div class="relative mx-2 h-10 border-r-2 border-slate-800">
-                                        <span class="absolute -top-2 left-1 text-xs font-bold">V(t)</span>
-                                        <span class="absolute -bottom-2 left-1 text-xs font-bold">0</span>
-                                    </div>
-                                </div>
+                        <div class="bg-white border border-slate-200 rounded-lg p-4 shadow-sm group hover:border-indigo-300 transition">
+                            <span class="text-xs font-bold text-indigo-500 uppercase">Paso 2: Integración Definida</span>
+                            <div class="math-block border-l-indigo-500 py-3 flex items-center justify-center bg-slate-50 overflow-x-auto mt-2">
+                                <div class="math-font text-xl flex items-center text-dark"><span class="mr-1">- ln( V<sub>f</sub> - V )</span><div class="relative mx-2 h-10 border-r-2 border-slate-800"><span class="absolute -top-2 left-1 text-xs font-bold">V(t)</span><span class="absolute -bottom-2 left-1 text-xs font-bold">0</span></div></div>
                                 <span class="math-font text-xl mx-4">=</span>
-                                <div class="math-font text-xl flex flex-col items-center justify-center leading-none text-dark">
-                                    <span class="border-b border-slate-800 px-2 pb-1 mb-1">t</span>
-                                    <span>RC</span>
-                                </div>
+                                <div class="math-font text-xl flex flex-col items-center justify-center leading-none text-dark"><span class="border-b border-slate-800 px-2 pb-1 mb-1">t</span><span>RC</span></div>
                             </div>
                         </div>
                     </div>
-
-                   <div class="mt-4 bg-blue-50 border border-blue-100 rounded-lg p-5">
-    <span class="text-xs font-bold text-primary uppercase tracking-wide">Paso 3: Modelo Matemático Final</span>
-    
-    <div class="grid grid-cols-1 gap-4 mt-3">
-        <div class="flex items-center gap-3">
-            <span class="text-sm font-bold text-slate-400 uppercase">Fórmula:</span>
-            <div class="math-font text-2xl text-dark">
-                V(t) = V<sub>f</sub> · ( 1 - e <sup class="text-base">-t / τ</sup> )
-            </div>
-        </div>
-
-        <div class="bg-white border-l-4 border-blue-500 rounded p-4 shadow-sm flex flex-col justify-center items-center relative overflow-hidden">
-            <span class="absolute top-2 left-2 text-[10px] font-bold text-slate-400 uppercase tracking-widest">Sustitución</span>
-            
-            <div class="math-font text-2xl flex items-center mt-2 text-dark">
-                V(t) = 
-                <span id="mathVs" class="font-bold text-primary mx-2">0</span>
-                · ( 1 - e 
-                <sup class="text-lg ml-1">
-                    -t / <span id="mathTau" class="font-bold text-dark">0</span>
-                </sup> 
-                )
-            </div>
-        </div>
-    </div>
-</div>
+                    <div class="mt-4 bg-blue-50 border border-blue-100 rounded-lg p-5">
+                        <span class="text-xs font-bold text-primary uppercase">Paso 3: Modelo Matemático</span>
+                        <div class="grid grid-cols-1 gap-4 mt-3">
+                            <div class="flex items-center gap-3"><span class="text-sm font-bold text-slate-400 uppercase">Fórmula:</span><div class="math-font text-2xl text-dark">V(t) = V<sub>f</sub> · ( 1 - e <sup class="text-base">-t / τ</sup> )</div></div>
+                            <div class="bg-white border-l-4 border-blue-500 rounded p-4 shadow-sm flex flex-col justify-center items-center relative overflow-hidden">
+                                <span class="absolute top-2 left-2 text-[10px] font-bold text-slate-400 uppercase tracking-widest">Sustitución</span>
+                                <div class="math-font text-2xl flex items-center mt-2 text-dark">V(t) = <span id="mathVs" class="font-bold text-primary mx-2">0</span> · ( 1 - e <sup class="text-lg ml-1">-t / <span id="mathTau" class="font-bold text-dark">0</span></sup> )</div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
                 <hr class="border-slate-200">
 
                 <div>
-                    <div class="flex items-center gap-2 mb-4">
-                        <div class="w-1 h-6 bg-red-500 rounded"></div>
-                        <h4 class="text-xl font-bold text-dark">2. Descarga (Condición inicial: V(0) = V<sub>f</sub>)</h4>
-                    </div>
-                    
+                    <div class="flex items-center gap-2 mb-4"><div class="w-1 h-6 bg-red-500 rounded"></div><h4 class="text-xl font-bold text-dark">2. Descarga (Condición inicial: V(0) = V<sub>f</sub>)</h4></div>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        
-                        <div class="bg-white border border-slate-200 rounded-lg p-4 shadow-sm relative overflow-hidden group hover:border-red-300 transition">
-                            <span class="text-xs font-bold text-red-500 uppercase tracking-wide">Paso 1: Variables Separables</span>
-                            <p class="text-sm text-gray-600 mt-1 mb-4">Sin fuente de voltaje (V<sub>f</sub>=0):</p>
-                            
-                            <div class="math-block border-l-red-500 py-3 flex items-center justify-center bg-slate-50 overflow-x-auto">
-                                <div class="math-font text-xl flex flex-col items-center justify-center leading-none text-dark">
-                                    <span class="border-b border-slate-800 px-1 pb-1 mb-1">dV</span>
-                                    <span>V</span>
-                                </div>
-                                <span class="math-font text-xl mx-4">=</span>
-                                <span class="math-font text-xl mr-2">-</span>
-                                <div class="math-font text-xl flex flex-col items-center justify-center leading-none text-dark">
-                                    <span class="border-b border-slate-800 px-1 pb-1 mb-1">dt</span>
-                                    <span>RC</span>
-                                </div>
+                        <div class="bg-white border border-slate-200 rounded-lg p-4 shadow-sm group hover:border-red-300 transition">
+                            <span class="text-xs font-bold text-red-500 uppercase">Paso 1: Variables Separables</span>
+                            <div class="math-block border-l-red-500 py-3 flex items-center justify-center bg-slate-50 overflow-x-auto mt-2">
+                                <div class="math-font text-xl flex flex-col items-center justify-center leading-none text-dark"><span class="border-b border-slate-800 px-1 pb-1 mb-1">dV</span><span>V</span></div>
+                                <span class="math-font text-xl mx-4">=</span><span class="math-font text-xl mr-2">-</span>
+                                <div class="math-font text-xl flex flex-col items-center justify-center leading-none text-dark"><span class="border-b border-slate-800 px-1 pb-1 mb-1">dt</span><span>RC</span></div>
                             </div>
                         </div>
-
-                        <div class="bg-white border border-slate-200 rounded-lg p-4 shadow-sm relative overflow-hidden group hover:border-pink-300 transition">
-                            <span class="text-xs font-bold text-pink-500 uppercase tracking-wide">Paso 2: Integración Definida</span>
-                            <p class="text-sm text-gray-600 mt-1 mb-4">Integramos desde voltaje inicial V<sub>f</sub>:</p>
-                            
-                            <div class="math-block border-l-pink-500 py-3 flex items-center justify-center bg-slate-50 overflow-x-auto">
-                                <div class="math-font text-xl flex items-center text-dark">
-                                    <span class="mr-1">ln( V )</span>
-                                    <div class="relative mx-2 h-10 border-r-2 border-slate-800">
-                                        <span class="absolute -top-2 left-1 text-xs font-bold">V(t)</span>
-                                        <span class="absolute -bottom-2 left-1 text-xs font-bold">V<sub>f</sub></span>
-                                    </div>
-                                </div>
-                                <span class="math-font text-xl mx-4">=</span>
-                                <span class="math-font text-xl mr-2">-</span>
-                                <div class="math-font text-xl flex flex-col items-center justify-center leading-none text-dark">
-                                    <span class="border-b border-slate-800 px-2 pb-1 mb-1">t</span>
-                                    <span>RC</span>
-                                </div>
+                        <div class="bg-white border border-slate-200 rounded-lg p-4 shadow-sm group hover:border-pink-300 transition">
+                            <span class="text-xs font-bold text-pink-500 uppercase">Paso 2: Integración Definida</span>
+                            <div class="math-block border-l-pink-500 py-3 flex items-center justify-center bg-slate-50 overflow-x-auto mt-2">
+                                <div class="math-font text-xl flex items-center text-dark"><span class="mr-1">ln( V )</span><div class="relative mx-2 h-10 border-r-2 border-slate-800"><span class="absolute -top-2 left-1 text-xs font-bold">V(t)</span><span class="absolute -bottom-2 left-1 text-xs font-bold">V<sub>f</sub></span></div></div>
+                                <span class="math-font text-xl mx-4">=</span><span class="math-font text-xl mr-2">-</span>
+                                <div class="math-font text-xl flex flex-col items-center justify-center leading-none text-dark"><span class="border-b border-slate-800 px-2 pb-1 mb-1">t</span><span>RC</span></div>
                             </div>
                         </div>
                     </div>
-
                     <div class="mt-4 bg-red-50 border border-red-100 rounded-lg p-5">
-    <span class="text-xs font-bold text-red-600 uppercase tracking-wide">Paso 3: Modelo Matemático Final</span>
-    
-    <div class="grid grid-cols-1 gap-4 mt-3">
-        <div class="flex items-center gap-3">
-            <span class="text-sm font-bold text-slate-400 uppercase">Fórmula:</span>
-            <div class="math-font text-2xl text-dark">
-                V(t) = V<sub>f</sub> · e <sup class="text-base">-t / τ</sup>
-            </div>
-        </div>
+                        <span class="text-xs font-bold text-red-600 uppercase">Paso 3: Modelo Final</span>
+                        <div class="grid grid-cols-1 gap-4 mt-3">
+                            <div class="flex items-center gap-3"><span class="text-sm font-bold text-slate-400 uppercase">Fórmula:</span><div class="math-font text-2xl text-dark">V(t) = V<sub>f</sub> · e <sup class="text-base">-t / τ</sup></div></div>
+                            <div class="bg-white border-l-4 border-red-500 rounded p-4 shadow-sm flex flex-col justify-center items-center relative overflow-hidden">
+                                <span class="absolute top-2 left-2 text-[10px] font-bold text-slate-400 uppercase tracking-widest">Sustitución</span>
+                                <div class="math-font text-2xl flex items-center mt-2 text-dark">V(t) = <span id="mathVs2" class="font-bold text-red-600 mx-2">0</span> · e <sup class="text-lg ml-1">-t / <span id="mathTau2" class="font-bold text-dark">0</span></sup></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
-        <div class="bg-white border-l-4 border-red-500 rounded p-4 shadow-sm flex flex-col justify-center items-center relative overflow-hidden">
-            <span class="absolute top-2 left-2 text-[10px] font-bold text-slate-400 uppercase tracking-widest">Sustitución</span>
-            
-            <div class="math-font text-2xl flex items-center mt-2 text-dark">
-                V(t) = 
-                <span id="mathVs2" class="font-bold text-red-600 mx-2">0</span>
-                · e 
-                <sup class="text-lg ml-1">
-                    -t / <span id="mathTau2" class="font-bold text-dark">0</span>
-                </sup>
-            </div>
-        </div>
-    </div>
-</div>
+                <div class="bg-slate-50 text-slate-700 rounded-lg p-4 mt-6 shadow-sm border border-slate-200">
+                    <div class="flex flex-col sm:flex-row items-center justify-between gap-4">
+                        <div class="flex items-center gap-3"><div class="h-10 w-10 bg-white rounded-full flex items-center justify-center text-xl font-serif italic border border-slate-200 text-primary shadow-sm">τ</div><div class="flex flex-col leading-tight"><span class="text-xs text-slate-400 uppercase font-bold tracking-wider">Constante de Tiempo</span><span class="text-sm font-serif italic">Tau = R · C</span></div></div>
+                        <div class="flex items-center gap-3 bg-white px-4 py-2 rounded-lg border border-slate-200 shadow-inner"><span class="math-font text-xl text-dark"><span id="mathR">0</span> Ω</span><span class="text-slate-400">×</span><span class="math-font text-xl text-dark"><span id="mathC">0</span> F</span><span class="text-slate-400">=</span><span class="math-font text-2xl font-bold text-primary"><span id="mathTauResult">0</span> s</span></div>
+                    </div>
+                </div>
 
-              <div class="bg-slate-50 text-slate-700 rounded-lg p-4 mt-6 shadow-sm border border-slate-200">
-    <div class="flex flex-col sm:flex-row items-center justify-between gap-4">
-        
-        <div class="flex items-center gap-3">
-            <div class="h-10 w-10 bg-white rounded-full flex items-center justify-center text-xl font-serif italic border border-slate-200 text-primary shadow-sm">
-                τ
             </div>
-            <div class="flex flex-col leading-tight">
-                <span class="text-xs text-slate-400 uppercase font-bold tracking-wider">Constante de Tiempo</span>
-                <span class="text-sm font-serif italic">Tau = R · C</span>
-            </div>
-        </div>
-        
-        <div class="flex items-center gap-3 bg-white px-4 py-2 rounded-lg border border-slate-200 shadow-inner">
-            <span class="math-font text-xl text-dark"><span id="mathR">0</span> Ω</span>
-            <span class="text-slate-400">×</span>
-            <span class="math-font text-xl text-dark"><span id="mathC">0</span> F</span>
-            <span class="text-slate-400">=</span>
-            <span class="math-font text-2xl font-bold text-primary"><span id="mathTauResult">0</span> s</span>
-        </div>
-
-    </div>
-</div>
-            
-            <div class="bg-slate-50 border-t px-6 py-4 flex justify-end">
-                <button onclick="toggleModal()" class="px-6 py-2 bg-dark text-white rounded hover:bg-opacity-90 transition shadow-lg">Cerrar Memoria</button>
-            </div>
+            <div class="bg-slate-50 border-t px-6 py-4 flex justify-end"><button onclick="window.toggleModal()" class="px-6 py-2 bg-dark text-white rounded hover:bg-opacity-90 transition shadow-lg">Cerrar</button></div>
         </div>
     </div>
 
-    <script src="script.js"></script>
+    <script>
+        let myChart = null;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const form = document.getElementById('simulationForm');
+            if(form){
+                form.addEventListener('submit', function(event) {
+                    event.preventDefault(); 
+                    runSimulation();
+                });
+            }
+        });
+
+        function runSimulation() {
+            const valR = parseFloat(document.getElementById('inputR').value) || 0;
+            const multR = parseFloat(document.getElementById('unitR').value) || 1;
+            const R = valR * multR;
+            const valC = parseFloat(document.getElementById('inputC').value) || 0;
+            const multC = parseFloat(document.getElementById('unitC').value) || 1;
+            const C = valC * multC;
+            const valV = parseFloat(document.getElementById('inputV').value) || 0;
+            const multV = parseFloat(document.getElementById('unitV').value) || 1;
+            const Vs = valV * multV;
+            const valT = parseFloat(document.getElementById('inputT').value) || 0;
+            const multT = parseFloat(document.getElementById('unitT').value) || 1;
+            const T_total = valT * multT;
+
+            const tau = R * C;
+
+            document.getElementById('displayTau').textContent = formatEngineering(tau) + "s";
+            document.getElementById('displayVmax').textContent = formatEngineering(Vs) + "V";
+            document.getElementById('displayStatus').textContent = "Calculado";
+
+            const steps = 100;
+            const timeStep = T_total / steps;
+            const labels = [];
+            const dataCharge = [];
+            const dataDischarge = [];
+            const tableBody = document.getElementById('dataTableBody');
+            tableBody.innerHTML = '';
+
+            for (let i = 0; i <= steps; i++) {
+                const t = i * timeStep;
+                const v_charge = Vs * (1 - Math.exp(-t / tau));
+                const v_discharge = Vs * Math.exp(-t / tau);
+                labels.push(t.toPrecision(3));
+                dataCharge.push(v_charge);
+                dataDischarge.push(v_discharge);
+
+                if (i % 10 === 0 || i === steps) {
+                    const percent = (v_charge / Vs) * 100;
+                    const percentDisplay = isNaN(percent) ? "0.0" : percent.toFixed(1);
+                    const row = `
+                        <tr class="border-b border-slate-100 last:border-0 hover:bg-slate-50 transition">
+                            <td class="px-4 py-2 font-mono text-xs">${formatEngineering(t)}s</td>
+                            <td class="px-4 py-2 font-medium text-blue-600">${formatEngineering(v_charge)}V</td>
+                            <td class="px-4 py-2 text-red-500">${formatEngineering(v_discharge)}V</td>
+                            <td class="px-4 py-2 text-slate-500">${percentDisplay}%</td>
+                        </tr>`;
+                    tableBody.innerHTML += row;
+                }
+            }
+            renderChart(labels, dataCharge, dataDischarge, Vs);
+        }
+
+        function formatEngineering(num) {
+            if (num === 0) return "0";
+            if (Math.abs(num) >= 1000) return (num/1000).toFixed(2) + "k";
+            if (Math.abs(num) < 0.001 && Math.abs(num) > 0) return (num*1000000).toFixed(2) + "μ";
+            if (Math.abs(num) < 1 && Math.abs(num) > 0) return (num*1000).toFixed(2) + "m";
+            return num.toFixed(2);
+        }
+
+        function renderChart(labels, dataCharge, dataDischarge, Vs) {
+            const ctx = document.getElementById('rcChart').getContext('2d');
+            if (myChart) myChart.destroy();
+            let gradientCharge = ctx.createLinearGradient(0, 0, 0, 400);
+            gradientCharge.addColorStop(0, 'rgba(60, 80, 224, 0.5)');
+            gradientCharge.addColorStop(1, 'rgba(60, 80, 224, 0.0)');
+
+            myChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [
+                        { label: 'Carga (V)', data: dataCharge, borderColor: '#3C50E0', backgroundColor: gradientCharge, borderWidth: 3, pointRadius: 0, fill: true, tension: 0.4 },
+                        { label: 'Descarga (V)', data: dataDischarge, borderColor: '#FF5733', borderWidth: 2, borderDash: [5, 5], pointRadius: 0, fill: false, tension: 0.4 }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    interaction: { mode: 'index', intersect: false },
+                    plugins: {
+                        legend: { position: 'top', labels: { usePointStyle: true, boxWidth: 10 } },
+                        tooltip: { backgroundColor: '#1A222C', titleColor: '#fff', bodyColor: '#fff', callbacks: { label: function(context) { return context.dataset.label + ': ' + parseFloat(context.parsed.y).toFixed(3) + ' V'; } } }
+                    },
+                    scales: {
+                        x: { grid: { display: false }, title: { display: true, text: 'Tiempo (s)' }, ticks: { maxTicksLimit: 10 } },
+                        y: { border: { dash: [4, 4] }, grid: { color: '#e2e8f0' }, title: { display: true, text: 'Voltaje (V)' } }
+                    }
+                }
+            });
+        }
+
+        // FUNCIONALIDAD GLOBAL DEL MODAL (Garantizada)
+        window.toggleModal = function() {
+            const modal = document.getElementById('mathModal');
+            if (modal.classList.contains('hidden')) {
+                updateMathModal();
+                modal.classList.remove('hidden');
+                modal.classList.add('flex');
+            } else {
+                modal.classList.add('hidden');
+                modal.classList.remove('flex');
+            }
+        };
+
+        function updateMathModal() {
+            const valR = parseFloat(document.getElementById('inputR').value) || 0;
+            const multR = parseFloat(document.getElementById('unitR').value) || 1;
+            const R = valR * multR;
+            const valC = parseFloat(document.getElementById('inputC').value) || 0;
+            const multC = parseFloat(document.getElementById('unitC').value) || 1;
+            const C = valC * multC;
+            const valV = parseFloat(document.getElementById('inputV').value) || 0;
+            const multV = parseFloat(document.getElementById('unitV').value) || 1;
+            const Vs = valV * multV;
+
+            const tau = R * C;
+            const displayR = R >= 1000 ? (R/1000) + "k" : R;
+            const displayC = C.toExponential(2);
+            const displayTau = tau.toFixed(4);
+
+            document.getElementById('mathVs').textContent = Vs;
+            document.getElementById('mathVs2').textContent = Vs;
+            document.getElementById('mathTau').textContent = displayTau;
+            document.getElementById('mathTau2').textContent = displayTau;
+            document.getElementById('mathR').textContent = displayR;
+            document.getElementById('mathC').textContent = displayC;
+            document.getElementById('mathTauResult').textContent = displayTau;
+        }
+    </script>
 </body>
 </html>

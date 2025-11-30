@@ -1,83 +1,103 @@
-// Variable global para almacenar la instancia del gráfico
+// Variable global para el gráfico
 let myChart = null;
 
-// Escuchar el evento submit del formulario cuando cargue la página
+// Inicialización segura
 document.addEventListener('DOMContentLoaded', () => {
     const form = document.getElementById('simulationForm');
-    form.addEventListener('submit', function(event) {
-        event.preventDefault(); // Evitar que la página se recargue
-        runSimulation();
-    });
+    if(form){
+        form.addEventListener('submit', function(event) {
+            event.preventDefault(); 
+            runSimulation();
+        });
+    }
 });
 
 function runSimulation() {
-    // 1. Obtener valores del DOM
-    const R = parseFloat(document.getElementById('inputR').value);
-    const C_micro = parseFloat(document.getElementById('inputC').value);
-    const Vs = parseFloat(document.getElementById('inputV').value);
-    const T_total = parseFloat(document.getElementById('inputT').value);
+    // 1. OBTENER VALORES Y MULTIPLICADORES
+    // Multiplicamos el número (Input) por el factor de unidad (Select)
+    
+    // Resistencia
+    const valR = parseFloat(document.getElementById('inputR').value) || 0;
+    const multR = parseFloat(document.getElementById('unitR').value) || 1;
+    const R = valR * multR; 
 
-    // 2. Conversiones y cálculos básicos
-    // Convertir microfaradios a Faradios
-    const C = C_micro * 1e-6; 
-    const tau = R * C; // Tau = R * C
+    // Capacitancia
+    const valC = parseFloat(document.getElementById('inputC').value) || 0;
+    const multC = parseFloat(document.getElementById('unitC').value) || 1;
+    const C = valC * multC; 
 
-    // Actualizar tarjetas del dashboard
-    document.getElementById('displayTau').textContent = tau.toFixed(4) + " s";
-    document.getElementById('displayVmax').textContent = Vs.toFixed(2) + " V";
+    // Voltaje
+    const valV = parseFloat(document.getElementById('inputV').value) || 0;
+    const multV = parseFloat(document.getElementById('unitV').value) || 1;
+    const Vs = valV * multV; 
+
+    // Tiempo
+    const valT = parseFloat(document.getElementById('inputT').value) || 0;
+    const multT = parseFloat(document.getElementById('unitT').value) || 1;
+    const T_total = valT * multT; 
+
+    // 2. CÁLCULOS
+    const tau = R * C; 
+
+    // Actualizar tarjetas (Dashboard)
+    document.getElementById('displayTau').textContent = formatEngineering(tau) + "s";
+    document.getElementById('displayVmax').textContent = formatEngineering(Vs) + "V";
     document.getElementById('displayStatus').textContent = "Calculado";
 
-    // 3. Generar puntos de datos para el gráfico
-    const steps = 50; // Cantidad de puntos en la gráfica
+    // 3. GENERAR DATOS
+    const steps = 100;
     const timeStep = T_total / steps;
-    
     const labels = [];
     const dataCharge = [];
     const dataDischarge = [];
-
     const tableBody = document.getElementById('dataTableBody');
-    tableBody.innerHTML = ''; // Limpiar tabla anterior
+    tableBody.innerHTML = ''; 
 
     for (let i = 0; i <= steps; i++) {
         const t = i * timeStep;
         
-        // --- ECUACIONES ---
-        // Carga: V(t) = Vs * (1 - e^(-t/RC))
+        // Ecuaciones Analíticas
         const v_charge = Vs * (1 - Math.exp(-t / tau));
-        
-        // Descarga: V(t) = Vs * e^(-t/RC)
         const v_discharge = Vs * Math.exp(-t / tau);
 
-        // Guardar para el gráfico
-        labels.push(t.toFixed(2));
+        // Guardar datos
+        labels.push(t.toPrecision(3)); 
         dataCharge.push(v_charge);
         dataDischarge.push(v_discharge);
 
-        // Llenar tabla (mostrando cada 5 iteraciones para no saturar)
-        if (i % 5 === 0 || i === steps) {
+        // Llenar Tabla (Muestreo cada 10 pasos)
+        if (i % 10 === 0 || i === steps) {
             const percent = (v_charge / Vs) * 100;
+            const percentDisplay = isNaN(percent) ? "0.0" : percent.toFixed(1);
+            
             const row = `
                 <tr class="border-b border-slate-100 last:border-0 hover:bg-slate-50 transition">
-                    <td class="px-4 py-2">${t.toFixed(3)}</td>
-                    <td class="px-4 py-2 font-medium text-blue-600">${v_charge.toFixed(3)}</td>
-                    <td class="px-4 py-2 text-red-500">${v_discharge.toFixed(3)}</td>
-                    <td class="px-4 py-2 text-slate-500">${percent.toFixed(1)}%</td>
+                    <td class="px-4 py-2 font-mono text-xs">${formatEngineering(t)}s</td>
+                    <td class="px-4 py-2 font-medium text-blue-600">${formatEngineering(v_charge)}V</td>
+                    <td class="px-4 py-2 text-red-500">${formatEngineering(v_discharge)}V</td>
+                    <td class="px-4 py-2 text-slate-500">${percentDisplay}%</td>
                 </tr>
             `;
             tableBody.innerHTML += row;
         }
     }
 
-    // 4. Renderizar Gráfico con Chart.js
     renderChart(labels, dataCharge, dataDischarge, Vs);
 }
 
+// Función auxiliar: Formato Ingeniería (ej: 0.001 -> 1m)
+function formatEngineering(num) {
+    if (num === 0) return "0";
+    if (Math.abs(num) >= 1000) return (num/1000).toFixed(2) + "k";
+    if (Math.abs(num) < 0.001 && Math.abs(num) > 0) return (num*1000000).toFixed(2) + "μ";
+    if (Math.abs(num) < 1 && Math.abs(num) > 0) return (num*1000).toFixed(2) + "m";
+    return num.toFixed(2);
+}
+
+// Renderizado del Gráfico
 function renderChart(labels, dataCharge, dataDischarge, Vs) {
     const ctx = document.getElementById('rcChart').getContext('2d');
-    
-    if (myChart) {
-        myChart.destroy();
-    }
+    if (myChart) myChart.destroy();
 
     let gradientCharge = ctx.createLinearGradient(0, 0, 0, 400);
     gradientCharge.addColorStop(0, 'rgba(60, 80, 224, 0.5)'); 
@@ -118,21 +138,22 @@ function renderChart(labels, dataCharge, dataDischarge, Vs) {
                 legend: { position: 'top', labels: { usePointStyle: true, boxWidth: 10 } },
                 tooltip: {
                     backgroundColor: '#1A222C', titleColor: '#fff', bodyColor: '#fff',
-                    callbacks: { label: function(context) { return context.dataset.label + ': ' + context.parsed.y.toFixed(3) + ' V'; } }
+                    callbacks: { label: function(context) { return context.dataset.label + ': ' + parseFloat(context.parsed.y).toFixed(3) + ' V'; } }
                 }
             },
             scales: {
-                x: { grid: { display: false }, title: { display: true, text: 'Tiempo (t) en segundos' } },
-                y: { border: { dash: [4, 4] }, grid: { color: '#e2e8f0' }, title: { display: true, text: 'Voltaje (V)' }, suggestedMax: Vs * 1.1 }
+                x: { grid: { display: false }, title: { display: true, text: 'Tiempo (s)' }, ticks: { maxTicksLimit: 10 } },
+                y: { border: { dash: [4, 4] }, grid: { color: '#e2e8f0' }, title: { display: true, text: 'Voltaje (V)' } }
             }
         }
     });
 }
 
-// --- LÓGICA DE LA VENTANA MODAL DE MEMORIA ---
+// --- LÓGICA DEL MODAL (VENTANA EMERGENTE) ---
 function toggleModal() {
     const modal = document.getElementById('mathModal');
-    
+    if (!modal) return; 
+
     if (modal.classList.contains('hidden')) {
         updateMathModal();
         modal.classList.remove('hidden');
@@ -142,24 +163,35 @@ function toggleModal() {
         modal.classList.remove('flex');
     }
 }
+// Hacer la función global para que el HTML la vea
+window.toggleModal = toggleModal;
 
 function updateMathModal() {
-    const R = document.getElementById('inputR').value || 0;
-    const C_micro = document.getElementById('inputC').value || 0;
-    const Vs = document.getElementById('inputV').value || 0;
-    
-    const C = parseFloat(C_micro) * 1e-6;
-    let tau = 0;
-    if(R && C) {
-         tau = (parseFloat(R) * C).toFixed(4);
-    }
+    // Recalcular valores para la memoria
+    const valR = parseFloat(document.getElementById('inputR').value) || 0;
+    const multR = parseFloat(document.getElementById('unitR').value) || 1;
+    const R = valR * multR;
 
-    // Insertar valores en el HTML
+    const valC = parseFloat(document.getElementById('inputC').value) || 0;
+    const multC = parseFloat(document.getElementById('unitC').value) || 1;
+    const C = valC * multC;
+
+    const valV = parseFloat(document.getElementById('inputV').value) || 0;
+    const multV = parseFloat(document.getElementById('unitV').value) || 1;
+    const Vs = valV * multV;
+
+    const tau = R * C;
+    
+    // Formateo para mostrar en las fórmulas
+    const displayR = R >= 1000 ? (R/1000) + "k" : R;
+    const displayC = C.toExponential(2); 
+    const displayTau = tau.toFixed(4);
+
     document.getElementById('mathVs').textContent = Vs;
     document.getElementById('mathVs2').textContent = Vs;
-    document.getElementById('mathTau').textContent = tau;
-    document.getElementById('mathTau2').textContent = tau;
-    document.getElementById('mathR').textContent = R;
-    document.getElementById('mathC').textContent = parseFloat(C_micro).toExponential(2) + "μ"; 
-    document.getElementById('mathTauResult').textContent = tau;
+    document.getElementById('mathTau').textContent = displayTau;
+    document.getElementById('mathTau2').textContent = displayTau;
+    document.getElementById('mathR').textContent = displayR;
+    document.getElementById('mathC').textContent = displayC; 
+    document.getElementById('mathTauResult').textContent = displayTau;
 }
