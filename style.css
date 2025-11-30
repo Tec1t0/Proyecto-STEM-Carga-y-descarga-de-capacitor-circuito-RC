@@ -1,0 +1,29 @@
+/* YA NO IMPORTAMOS DESDE GOOGLE (Para que funcione offline) */
+
+/* Estilos base */
+body {
+    /* Esta lista busca la mejor fuente disponible en tu computadora sin descargar nada */
+    font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    
+    background-color: #F1F5F9; /* Color de fondo gris muy suave */
+    color: #1A222C; /* Color de texto oscuro para buena lectura */
+}
+
+/* Personalización del Scrollbar (Barra de desplazamiento) */
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: #f1f1f1; 
+}
+
+::-webkit-scrollbar-thumb {
+    background: #cbd5e1; 
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #94a3b8; 
+}
