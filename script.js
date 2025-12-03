@@ -1,8 +1,9 @@
 // Variable global para el gráfico
 let myChart = null;
 
-// Inicialización segura
+// Inicialización segura y eventos
 document.addEventListener('DOMContentLoaded', () => {
+    // 1. Manejo del formulario de simulación
     const form = document.getElementById('simulationForm');
     if(form){
         form.addEventListener('submit', function(event) {
@@ -10,28 +11,33 @@ document.addEventListener('DOMContentLoaded', () => {
             runSimulation();
         });
     }
+
+    // 2. LÓGICA DEL MODAL INTRODUCTORIO (Se abre automático)
+    // Usamos un pequeño delay para que la animación se aprecie mejor al cargar
+    setTimeout(() => {
+        const introModal = document.getElementById('introModal');
+        if(introModal) {
+            introModal.classList.remove('hidden');
+            introModal.classList.add('flex');
+        }
+    }, 500); 
 });
 
+// Función Principal de Simulación
 function runSimulation() {
     // 1. OBTENER VALORES Y MULTIPLICADORES
-    // Multiplicamos el número (Input) por el factor de unidad (Select)
-    
-    // Resistencia
     const valR = parseFloat(document.getElementById('inputR').value) || 0;
     const multR = parseFloat(document.getElementById('unitR').value) || 1;
     const R = valR * multR; 
 
-    // Capacitancia
     const valC = parseFloat(document.getElementById('inputC').value) || 0;
     const multC = parseFloat(document.getElementById('unitC').value) || 1;
     const C = valC * multC; 
 
-    // Voltaje
     const valV = parseFloat(document.getElementById('inputV').value) || 0;
     const multV = parseFloat(document.getElementById('unitV').value) || 1;
     const Vs = valV * multV; 
 
-    // Tiempo
     const valT = parseFloat(document.getElementById('inputT').value) || 0;
     const multT = parseFloat(document.getElementById('unitT').value) || 1;
     const T_total = valT * multT; 
@@ -56,7 +62,7 @@ function runSimulation() {
     for (let i = 0; i <= steps; i++) {
         const t = i * timeStep;
         
-        // Ecuaciones Analíticas
+        // Ecuaciones Analíticas (Solución EDO)
         const v_charge = Vs * (1 - Math.exp(-t / tau));
         const v_discharge = Vs * Math.exp(-t / tau);
 
@@ -65,7 +71,7 @@ function runSimulation() {
         dataCharge.push(v_charge);
         dataDischarge.push(v_discharge);
 
-        // Llenar Tabla (Muestreo cada 10 pasos)
+        // Llenar Tabla (Muestreo cada 10 pasos para no saturar)
         if (i % 10 === 0 || i === steps) {
             const percent = (v_charge / Vs) * 100;
             const percentDisplay = isNaN(percent) ? "0.0" : percent.toFixed(1);
@@ -94,11 +100,12 @@ function formatEngineering(num) {
     return num.toFixed(2);
 }
 
-// Renderizado del Gráfico
+// Renderizado del Gráfico con Chart.js
 function renderChart(labels, dataCharge, dataDischarge, Vs) {
     const ctx = document.getElementById('rcChart').getContext('2d');
     if (myChart) myChart.destroy();
 
+    // Gradiente bonito para el área bajo la curva
     let gradientCharge = ctx.createLinearGradient(0, 0, 0, 400);
     gradientCharge.addColorStop(0, 'rgba(60, 80, 224, 0.5)'); 
     gradientCharge.addColorStop(1, 'rgba(60, 80, 224, 0.0)');
@@ -149,7 +156,9 @@ function renderChart(labels, dataCharge, dataDischarge, Vs) {
     });
 }
 
-// --- LÓGICA DEL MODAL (VENTANA EMERGENTE) ---
+// --- LÓGICA DE MODALES (VENTANAS EMERGENTES) ---
+
+// 1. Modal de Memoria de Cálculo (Matemáticas)
 function toggleModal() {
     const modal = document.getElementById('mathModal');
     if (!modal) return; 
@@ -163,11 +172,10 @@ function toggleModal() {
         modal.classList.remove('flex');
     }
 }
-// Hacer la función global para que el HTML la vea
-window.toggleModal = toggleModal;
+window.toggleModal = toggleModal; // Hacer global
 
+// Actualizar fórmulas matemáticas dinámicamente
 function updateMathModal() {
-    // Recalcular valores para la memoria
     const valR = parseFloat(document.getElementById('inputR').value) || 0;
     const multR = parseFloat(document.getElementById('unitR').value) || 1;
     const R = valR * multR;
@@ -182,7 +190,6 @@ function updateMathModal() {
 
     const tau = R * C;
     
-    // Formateo para mostrar en las fórmulas
     const displayR = R >= 1000 ? (R/1000) + "k" : R;
     const displayC = C.toExponential(2); 
     const displayTau = tau.toFixed(4);
@@ -195,3 +202,18 @@ function updateMathModal() {
     document.getElementById('mathC').textContent = displayC; 
     document.getElementById('mathTauResult').textContent = displayTau;
 }
+
+// 2. Modal de Introducción (Nuevo)
+function closeIntro() {
+    const introModal = document.getElementById('introModal');
+    if(introModal) {
+        // Efecto visual simple
+        introModal.style.opacity = '0';
+        setTimeout(() => {
+            introModal.classList.add('hidden');
+            introModal.classList.remove('flex');
+            introModal.style.opacity = '1';
+        }, 300);
+    }
+}
+window.closeIntro = closeIntro; // Hacer global

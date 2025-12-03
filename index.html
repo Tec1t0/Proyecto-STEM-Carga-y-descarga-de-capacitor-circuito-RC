@@ -24,24 +24,20 @@
     </script>
 
     <style>
-        /* Fuentes */
-        body {
-            font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-            background-color: #F1F5F9;
-            color: #1A222C;
-        }
-
-        /* Scrollbar */
+        /* Estilos Base y Animaciones */
+        body { font-family: ui-sans-serif, system-ui, sans-serif; background-color: #F1F5F9; color: #1A222C; }
+        
+        /* Scrollbar personalizado */
         ::-webkit-scrollbar { width: 8px; height: 8px; }
         ::-webkit-scrollbar-track { background: #f1f1f1; }
         ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
         ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
 
-        /* Estilos Matemáticos */
+        /* Fuentes Matemáticas */
         .math-font { font-family: 'Times New Roman', Times, serif; font-style: italic; }
         .math-block { background-color: #f8fafc; border-left-width: 4px; border-radius: 0 0.5rem 0.5rem 0; }
 
-        /* REGLAS OBLIGATORIAS PARA EL MODAL */
+        /* REGLAS CRÍTICAS PARA MODALES */
         .hidden { display: none !important; }
         .flex { display: flex !important; }
 
@@ -49,7 +45,7 @@
             from { opacity: 0; transform: translateY(-20px); }
             to { opacity: 1; transform: translateY(0); }
         }
-        .animate-fade-in-down { animation: fadeInDown 0.3s ease-out forwards; }
+        .animate-fade-in-down { animation: fadeInDown 0.5s ease-out forwards; }
     </style>
 </head>
 <body class="text-slate-600 bg-body">
@@ -64,7 +60,7 @@
                 <ul class="space-y-2">
                     <li>
                         <a href="#" class="flex items-center rounded-lg bg-primary px-4 py-2 text-white shadow-md">
-                            <svg class="h-5 w-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path></svg>
+                            <svg class="h-5 w-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path></svg>
                             <span>Dashboard RC</span>
                         </a>
                     </li>
@@ -79,14 +75,16 @@
                     <h1 class="text-2xl font-bold text-dark">Simulación Carga/Descarga</h1>
                 </div>
                 
-                <div class="flex items-center gap-4">
+                <div class="flex items-center gap-3">
+                    <a href="Presentacion.pptx" download class="hidden sm:flex items-center gap-2 bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition shadow-md border border-green-700">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+                        <span class="font-medium">PPT</span>
+                    </a>
+
                     <button onclick="window.toggleModal()" class="flex items-center gap-2 bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition shadow-md border border-indigo-700">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg>
-                        <span class="font-medium">Ver Memoria Cálculo</span>
+                        <span class="font-medium">Memoria Cálculo</span>
                     </button>
-                    
-                    <div class="h-8 w-px bg-slate-200 hidden sm:block"></div>
-                    <span class="text-sm font-medium text-slate-500 hidden sm:block">Equipo de Ingeniería</span>
                 </div>
             </header>
 
@@ -176,7 +174,7 @@
                                         </select>
                                     </div>
                                 </div>
-                                <button type="submit" class="flex w-full justify-center rounded bg-primary p-3 font-medium text-white hover:bg-opacity-90 shadow-lg">Simular Gráfico</button>
+                                <button type="submit" class="flex w-full justify-center rounded bg-primary p-3 font-medium text-white hover:bg-opacity-90 shadow-lg transition">Simular Gráfico</button>
                             </form>
                         </div>
                     </div>
@@ -317,148 +315,46 @@
         </div>
     </div>
 
-    <script>
-        let myChart = null;
+    <div id="introModal" class="fixed inset-0 bg-gray-900 bg-opacity-80 hidden items-center justify-center z-[60] backdrop-blur-sm p-4 transition-opacity duration-300">
+        <div class="bg-white rounded-xl shadow-2xl w-full max-w-2xl overflow-hidden transform scale-100 animate-fade-in-down border-t-4 border-primary">
+            
+            <div class="bg-slate-50 px-8 py-6 border-b border-slate-100">
+                <h2 class="text-2xl font-bold text-dark mb-1">Proyecto STEM: Circuitos RC</h2>
+                <p class="text-sm text-primary font-medium tracking-wide uppercase">Simulación de Fenómenos Transitorios</p>
+            </div>
 
-        document.addEventListener('DOMContentLoaded', () => {
-            const form = document.getElementById('simulationForm');
-            if(form){
-                form.addEventListener('submit', function(event) {
-                    event.preventDefault(); 
-                    runSimulation();
-                });
-            }
-        });
+            <div class="p-8 space-y-6">
+                
+                <div>
+                    <div class="flex items-center gap-2 mb-2">
+                        <svg class="w-5 h-5 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                        <h3 class="font-bold text-lg text-slate-800">Planteamiento del Problema</h3>
+                    </div>
+                    <p class="text-slate-600 leading-relaxed text-justify">
+                        En el análisis de sistemas electrónicos, es crítico comprender cómo los componentes almacenadores de energía responden al cambio de voltaje. Este proyecto busca <strong>modelar matemáticamente y simular</strong> el comportamiento de carga y descarga de un capacitor en un circuito RC serie.
+                    </p>
+                </div>
 
-        function runSimulation() {
-            const valR = parseFloat(document.getElementById('inputR').value) || 0;
-            const multR = parseFloat(document.getElementById('unitR').value) || 1;
-            const R = valR * multR;
-            const valC = parseFloat(document.getElementById('inputC').value) || 0;
-            const multC = parseFloat(document.getElementById('unitC').value) || 1;
-            const C = valC * multC;
-            const valV = parseFloat(document.getElementById('inputV').value) || 0;
-            const multV = parseFloat(document.getElementById('unitV').value) || 1;
-            const Vs = valV * multV;
-            const valT = parseFloat(document.getElementById('inputT').value) || 0;
-            const multT = parseFloat(document.getElementById('unitT').value) || 1;
-            const T_total = valT * multT;
+                <div class="bg-blue-50 border border-blue-100 rounded-lg p-4">
+                    <div class="flex items-center gap-2 mb-2">
+                        <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                        <h3 class="font-bold text-sm text-blue-800 uppercase">Objetivo de la Simulación</h3>
+                    </div>
+                    <p class="text-sm text-blue-900">
+                        Validar las ecuaciones diferenciales de primer orden, demostrando cómo la constante de tiempo (<span class="font-serif italic">τ = R·C</span>) determina la velocidad de respuesta del sistema hasta alcanzar el estado estable.
+                    </p>
+                </div>
 
-            const tau = R * C;
+            </div>
 
-            document.getElementById('displayTau').textContent = formatEngineering(tau) + "s";
-            document.getElementById('displayVmax').textContent = formatEngineering(Vs) + "V";
-            document.getElementById('displayStatus').textContent = "Calculado";
+            <div class="bg-slate-50 px-8 py-4 border-t border-slate-100 flex justify-end">
+                <button onclick="closeIntro()" class="bg-primary hover:bg-indigo-700 text-white font-bold py-2.5 px-8 rounded-lg shadow-lg hover:shadow-xl transition-all transform hover:-translate-y-0.5">
+                    Iniciar Simulación
+                </button>
+            </div>
+        </div>
+    </div>
 
-            const steps = 100;
-            const timeStep = T_total / steps;
-            const labels = [];
-            const dataCharge = [];
-            const dataDischarge = [];
-            const tableBody = document.getElementById('dataTableBody');
-            tableBody.innerHTML = '';
-
-            for (let i = 0; i <= steps; i++) {
-                const t = i * timeStep;
-                const v_charge = Vs * (1 - Math.exp(-t / tau));
-                const v_discharge = Vs * Math.exp(-t / tau);
-                labels.push(t.toPrecision(3));
-                dataCharge.push(v_charge);
-                dataDischarge.push(v_discharge);
-
-                if (i % 10 === 0 || i === steps) {
-                    const percent = (v_charge / Vs) * 100;
-                    const percentDisplay = isNaN(percent) ? "0.0" : percent.toFixed(1);
-                    const row = `
-                        <tr class="border-b border-slate-100 last:border-0 hover:bg-slate-50 transition">
-                            <td class="px-4 py-2 font-mono text-xs">${formatEngineering(t)}s</td>
-                            <td class="px-4 py-2 font-medium text-blue-600">${formatEngineering(v_charge)}V</td>
-                            <td class="px-4 py-2 text-red-500">${formatEngineering(v_discharge)}V</td>
-                            <td class="px-4 py-2 text-slate-500">${percentDisplay}%</td>
-                        </tr>`;
-                    tableBody.innerHTML += row;
-                }
-            }
-            renderChart(labels, dataCharge, dataDischarge, Vs);
-        }
-
-        function formatEngineering(num) {
-            if (num === 0) return "0";
-            if (Math.abs(num) >= 1000) return (num/1000).toFixed(2) + "k";
-            if (Math.abs(num) < 0.001 && Math.abs(num) > 0) return (num*1000000).toFixed(2) + "μ";
-            if (Math.abs(num) < 1 && Math.abs(num) > 0) return (num*1000).toFixed(2) + "m";
-            return num.toFixed(2);
-        }
-
-        function renderChart(labels, dataCharge, dataDischarge, Vs) {
-            const ctx = document.getElementById('rcChart').getContext('2d');
-            if (myChart) myChart.destroy();
-            let gradientCharge = ctx.createLinearGradient(0, 0, 0, 400);
-            gradientCharge.addColorStop(0, 'rgba(60, 80, 224, 0.5)');
-            gradientCharge.addColorStop(1, 'rgba(60, 80, 224, 0.0)');
-
-            myChart = new Chart(ctx, {
-                type: 'line',
-                data: {
-                    labels: labels,
-                    datasets: [
-                        { label: 'Carga (V)', data: dataCharge, borderColor: '#3C50E0', backgroundColor: gradientCharge, borderWidth: 3, pointRadius: 0, fill: true, tension: 0.4 },
-                        { label: 'Descarga (V)', data: dataDischarge, borderColor: '#FF5733', borderWidth: 2, borderDash: [5, 5], pointRadius: 0, fill: false, tension: 0.4 }
-                    ]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    interaction: { mode: 'index', intersect: false },
-                    plugins: {
-                        legend: { position: 'top', labels: { usePointStyle: true, boxWidth: 10 } },
-                        tooltip: { backgroundColor: '#1A222C', titleColor: '#fff', bodyColor: '#fff', callbacks: { label: function(context) { return context.dataset.label + ': ' + parseFloat(context.parsed.y).toFixed(3) + ' V'; } } }
-                    },
-                    scales: {
-                        x: { grid: { display: false }, title: { display: true, text: 'Tiempo (s)' }, ticks: { maxTicksLimit: 10 } },
-                        y: { border: { dash: [4, 4] }, grid: { color: '#e2e8f0' }, title: { display: true, text: 'Voltaje (V)' } }
-                    }
-                }
-            });
-        }
-
-        // FUNCIONALIDAD GLOBAL DEL MODAL (Garantizada)
-        window.toggleModal = function() {
-            const modal = document.getElementById('mathModal');
-            if (modal.classList.contains('hidden')) {
-                updateMathModal();
-                modal.classList.remove('hidden');
-                modal.classList.add('flex');
-            } else {
-                modal.classList.add('hidden');
-                modal.classList.remove('flex');
-            }
-        };
-
-        function updateMathModal() {
-            const valR = parseFloat(document.getElementById('inputR').value) || 0;
-            const multR = parseFloat(document.getElementById('unitR').value) || 1;
-            const R = valR * multR;
-            const valC = parseFloat(document.getElementById('inputC').value) || 0;
-            const multC = parseFloat(document.getElementById('unitC').value) || 1;
-            const C = valC * multC;
-            const valV = parseFloat(document.getElementById('inputV').value) || 0;
-            const multV = parseFloat(document.getElementById('unitV').value) || 1;
-            const Vs = valV * multV;
-
-            const tau = R * C;
-            const displayR = R >= 1000 ? (R/1000) + "k" : R;
-            const displayC = C.toExponential(2);
-            const displayTau = tau.toFixed(4);
-
-            document.getElementById('mathVs').textContent = Vs;
-            document.getElementById('mathVs2').textContent = Vs;
-            document.getElementById('mathTau').textContent = displayTau;
-            document.getElementById('mathTau2').textContent = displayTau;
-            document.getElementById('mathR').textContent = displayR;
-            document.getElementById('mathC').textContent = displayC;
-            document.getElementById('mathTauResult').textContent = displayTau;
-        }
-    </script>
+    <script src="script.js"></script>
 </body>
 </html>
