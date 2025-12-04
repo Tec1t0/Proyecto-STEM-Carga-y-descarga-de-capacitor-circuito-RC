@@ -29,7 +29,7 @@ document.addEventListener('DOMContentLoaded', () => {
             introModal.classList.remove('hidden');
             introModal.classList.add('flex');
         }
-    }, 600); // Pequeño retraso para una entrada suave
+    }, 600); 
 });
 
 
@@ -227,12 +227,20 @@ function updateMathModal() {
 
     const tau = R * C;
     
-    const displayR = R >= 1000 ? (R/1000) + "k" : R;
-    const displayC = C.toExponential(2); 
+    // Formateo para mostrar unidades
+    const displayR = R >= 1000 ? (R/1000) + "kΩ" : R + "Ω";
+    const displayC = formatEngineering(C) + "F"; 
     const displayTau = tau.toFixed(4);
 
     document.getElementById('mathVs').textContent = Vs;
     document.getElementById('mathVs2').textContent = Vs;
     document.getElementById('mathTau').textContent = displayTau;
     document.getElementById('mathTau2').textContent = displayTau;
+
+    // Actualizar la tarjeta restaurada de TAU
+    if(document.getElementById('mathR')) {
+        document.getElementById('mathR').textContent = displayR;
+        document.getElementById('mathC').textContent = displayC;
+        document.getElementById('mathTauResult').textContent = displayTau;
+    }
 }
