@@ -1,9 +1,10 @@
-// Variable global para el gráfico
+// Variable global para el gráfico de Chart.js
 let myChart = null;
 
-// Inicialización segura y eventos
+// --- INICIALIZACIÓN Y EVENTOS ---
 document.addEventListener('DOMContentLoaded', () => {
-    // 1. Manejo del formulario de simulación
+    
+    // 1. Configurar Simulación
     const form = document.getElementById('simulationForm');
     if(form){
         form.addEventListener('submit', function(event) {
@@ -12,20 +13,29 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // 2. LÓGICA DEL MODAL INTRODUCTORIO (Se abre automático)
-    // Usamos un pequeño delay para que la animación se aprecie mejor al cargar
+    // 2. Lógica del Diagrama SVG (Actualización en tiempo real)
+    const inputs = document.querySelectorAll('#inputR, #unitR, #inputC, #unitC, #inputV, #unitV');
+    inputs.forEach(input => {
+        input.addEventListener('input', updateSchematic);
+        input.addEventListener('change', updateSchematic);
+    });
+    // Llamada inicial para que no aparezca en "0"
+    updateSchematic(); 
+
+    // 3. Abrir Modal de Introducción automáticamente
     setTimeout(() => {
         const introModal = document.getElementById('introModal');
         if(introModal) {
             introModal.classList.remove('hidden');
             introModal.classList.add('flex');
         }
-    }, 500); 
+    }, 600); // Pequeño retraso para una entrada suave
 });
 
-// Función Principal de Simulación
+
+// --- LÓGICA DE SIMULACIÓN Y CÁLCULO ---
 function runSimulation() {
-    // 1. OBTENER VALORES Y MULTIPLICADORES
+    // A. Obtener Valores Normalizados
     const valR = parseFloat(document.getElementById('inputR').value) || 0;
     const multR = parseFloat(document.getElementById('unitR').value) || 1;
     const R = valR * multR; 
@@ -42,15 +52,15 @@ function runSimulation() {
     const multT = parseFloat(document.getElementById('unitT').value) || 1;
     const T_total = valT * multT; 
 
-    // 2. CÁLCULOS
+    // B. Cálculo de Tau
     const tau = R * C; 
 
-    // Actualizar tarjetas (Dashboard)
+    // C. Actualizar Dashboard
     document.getElementById('displayTau').textContent = formatEngineering(tau) + "s";
     document.getElementById('displayVmax').textContent = formatEngineering(Vs) + "V";
     document.getElementById('displayStatus').textContent = "Calculado";
 
-    // 3. GENERAR DATOS
+    // D. Generar Datos para Gráfico y Tabla
     const steps = 100;
     const timeStep = T_total / steps;
     const labels = [];
@@ -62,16 +72,15 @@ function runSimulation() {
     for (let i = 0; i <= steps; i++) {
         const t = i * timeStep;
         
-        // Ecuaciones Analíticas (Solución EDO)
+        // Fórmulas EDO
         const v_charge = Vs * (1 - Math.exp(-t / tau));
         const v_discharge = Vs * Math.exp(-t / tau);
 
-        // Guardar datos
         labels.push(t.toPrecision(3)); 
         dataCharge.push(v_charge);
         dataDischarge.push(v_discharge);
 
-        // Llenar Tabla (Muestreo cada 10 pasos para no saturar)
+        // Llenar tabla (muestreo reducido cada 10 pasos)
         if (i % 10 === 0 || i === steps) {
             const percent = (v_charge / Vs) * 100;
             const percentDisplay = isNaN(percent) ? "0.0" : percent.toFixed(1);
@@ -87,11 +96,26 @@ function runSimulation() {
             tableBody.innerHTML += row;
         }
     }
-
     renderChart(labels, dataCharge, dataDischarge, Vs);
 }
 
-// Función auxiliar: Formato Ingeniería (ej: 0.001 -> 1m)
+// --- ACTUALIZAR TEXTOS DEL SVG ---
+function updateSchematic() {
+    const valR = document.getElementById('inputR').value || '0';
+    const txtUnitR = document.getElementById('unitR').options[document.getElementById('unitR').selectedIndex].text;
+    
+    const valC = document.getElementById('inputC').value || '0';
+    const txtUnitC = document.getElementById('unitC').options[document.getElementById('unitC').selectedIndex].text;
+
+    const valV = document.getElementById('inputV').value || '0';
+    const txtUnitV = document.getElementById('unitV').options[document.getElementById('unitV').selectedIndex].text;
+
+    document.getElementById('schematicR').textContent = `${valR} ${txtUnitR}`;
+    document.getElementById('schematicC').textContent = `${valC} ${txtUnitC}`;
+    document.getElementById('schematicV').textContent = `${valV} ${txtUnitV}`;
+}
+
+// --- UTILIDADES DE FORMATO ---
 function formatEngineering(num) {
     if (num === 0) return "0";
     if (Math.abs(num) >= 1000) return (num/1000).toFixed(2) + "k";
@@ -100,12 +124,11 @@ function formatEngineering(num) {
     return num.toFixed(2);
 }
 
-// Renderizado del Gráfico con Chart.js
+// --- RENDERIZADO DEL GRÁFICO ---
 function renderChart(labels, dataCharge, dataDischarge, Vs) {
     const ctx = document.getElementById('rcChart').getContext('2d');
     if (myChart) myChart.destroy();
 
-    // Gradiente bonito para el área bajo la curva
     let gradientCharge = ctx.createLinearGradient(0, 0, 0, 400);
     gradientCharge.addColorStop(0, 'rgba(60, 80, 224, 0.5)'); 
     gradientCharge.addColorStop(1, 'rgba(60, 80, 224, 0.0)');
@@ -156,9 +179,23 @@ function renderChart(labels, dataCharge, dataDischarge, Vs) {
     });
 }
 
-// --- LÓGICA DE MODALES (VENTANAS EMERGENTES) ---
+// --- GESTIÓN DE MODALES ---
 
-// 1. Modal de Memoria de Cálculo (Matemáticas)
+// Modal Introducción
+function closeIntro() {
+    const introModal = document.getElementById('introModal');
+    if(introModal) {
+        introModal.style.opacity = '0';
+        setTimeout(() => {
+            introModal.classList.add('hidden');
+            introModal.classList.remove('flex');
+            introModal.style.opacity = '1';
+        }, 300);
+    }
+}
+window.closeIntro = closeIntro;
+
+// Modal Memoria de Cálculo
 function toggleModal() {
     const modal = document.getElementById('mathModal');
     if (!modal) return; 
@@ -172,9 +209,9 @@ function toggleModal() {
         modal.classList.remove('flex');
     }
 }
-window.toggleModal = toggleModal; // Hacer global
+window.toggleModal = toggleModal;
 
-// Actualizar fórmulas matemáticas dinámicamente
+// Actualizar valores en la memoria de cálculo
 function updateMathModal() {
     const valR = parseFloat(document.getElementById('inputR').value) || 0;
     const multR = parseFloat(document.getElementById('unitR').value) || 1;
@@ -198,22 +235,4 @@ function updateMathModal() {
     document.getElementById('mathVs2').textContent = Vs;
     document.getElementById('mathTau').textContent = displayTau;
     document.getElementById('mathTau2').textContent = displayTau;
-    document.getElementById('mathR').textContent = displayR;
-    document.getElementById('mathC').textContent = displayC; 
-    document.getElementById('mathTauResult').textContent = displayTau;
 }
-
-// 2. Modal de Introducción (Nuevo)
-function closeIntro() {
-    const introModal = document.getElementById('introModal');
-    if(introModal) {
-        // Efecto visual simple
-        introModal.style.opacity = '0';
-        setTimeout(() => {
-            introModal.classList.add('hidden');
-            introModal.classList.remove('flex');
-            introModal.style.opacity = '1';
-        }, 300);
-    }
-}
-window.closeIntro = closeIntro; // Hacer global
